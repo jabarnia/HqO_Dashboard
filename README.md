@@ -65,5 +65,5 @@ To put it all together, I have used the streamlit library to create a mock up
 dashboard. The streamlit webpage does not have all the features in the images 
 below, but it gets very close in providing a base to work with.
 
-<img src="./Images/board1_world.PNG" alt="drawing" style="width:300px;"/>
+<img src="./Images/board1_world.png" alt="drawing" style="width:300px;"/>
 <p>&nbsp;</p>
