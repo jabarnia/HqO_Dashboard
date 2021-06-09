@@ -29,16 +29,41 @@ show them how they compare to their competitors.
 ## Elements
 
 Data is coming from HqO servers as tables, and the folder data includes a step 
-by step guide on how to preprocess it. I have also used city shapefiles to create 
-the map that zooms into one city.
+by step guide on how to preprocess it. As a part of that process, two machine 
+learning models shall be trained on our data:
+- A Kmeans model to cluster our buildings
+- A regression model trained on the user satisfaction column
+
+As the number of buildings grows, the regression model should be trained on 
+subsets of the data (ie. on buildings in the same city) to report back what 
+specific factors are important in each of our comparison groups. With the 
+current size of our data set, it is my recommendation to train the model only 
+on the full data set, and instead define a metric to count for importance of
+each feature, the sdt of that feature in the data set, and the diferrence of 
+mean of that feature in our subset with mean of it for buildings in the set that
+are reported to have a score above a desired level.
+
+In a second folder called city data, I have provided the source for city shapefiles that were used to create the map that zooms into one city.
 
 ## Plots
 In the folder "plots" I have defined functions to draw diagrams showcasing the 
-data we are looking at. Here is an example of the 
+data we are looking at. Here is an example of the tenant satisfaction factors
+(from gathered data from users) as a box plot:
 
-![Image of Yaktocat]()
+<img src="./Images/satisfaction_factors.PNG" alt="drawing" style="width:300px;"/>
+<p>&nbsp;</p>
+
+and here is an example of a polar diagram showing coefiicients (feature 
+importance) of the model mentioned before:
+
+<img src="./Images/Feature_importance.PNG" alt="drawing" style="width:300px;"/>
+<p>&nbsp;</p>
 
 ## Dashboard
 
 To put it all together, I have used the streamlit library to create a mock up
-dashboard. 
+dashboard. The streamlit webpage does not have all the features in the images 
+below, but it gets very close in providing a base to work with.
+
+<img src="./Images/board 1 - world.PNG" alt="drawing" style="width:300px;"/>
+<p>&nbsp;</p>
