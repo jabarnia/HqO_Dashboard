@@ -50,13 +50,13 @@ In the folder "plots" I have defined functions to draw diagrams showcasing the
 data we are looking at. Here is an example of the tenant satisfaction factors
 (from gathered data from users) as a box plot:
 
-<img src="./Images/satisfaction_factors.PNG" alt="drawing" style="width:300px;"/>
+<img src="./Images/satisfaction_factors.PNG" alt="drawing" style="width:200px;"/>
 <p>&nbsp;</p>
 
 and here is an example of a polar diagram showing coefiicients (feature 
 importance) of the model mentioned before:
 
-<img src="./Images/Feature_importance.PNG" alt="drawing" style="width:300px;"/>
+<img src="./Images/Feature_importance.PNG" alt="drawing" style="width:200px;"/>
 <p>&nbsp;</p>
 
 ## Dashboard
@@ -65,5 +65,5 @@ To put it all together, I have used the streamlit library to create a mock up
 dashboard. The streamlit webpage does not have all the features in the images 
 below, but it gets very close in providing a base to work with.
 
-<img src="./Images/board 1 - world.PNG" alt="drawing" style="width:300px;"/>
+<img src="./Images/board1_world.PNG" alt="drawing" style="width:300px;"/>
 <p>&nbsp;</p>
