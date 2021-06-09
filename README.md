@@ -1,18 +1,19 @@
 # HqO_Dashboard
 
 A dashboard for the HqO company's clients to provide insight into how their 
-building summary
+building are performing.
 
 ## Introduction 
 
-HqO is a platform/app that helps landlords (of commercial office buildings) 
+HqO is a platform that helps landlords (of commercial/office buildings) 
 create a better experience for their customers (people who work in those 
-buildings). 
+buildings). One of the services they currently provide is a white labeled application, 
+customizable for each of the buildings their clients own.
 Imagine working in a campus or a large building, and having an all-in-one app 
-that contains your entry badge, latest info on COVID regulation for the gym, 
+that contains the entry badge, latest info on COVID regulation for the gym, 
 working hours of the coffee kiosk on level 4, and deals for the nearby taco shop.
-What does this do? Happier people in these buildings means happier tennants, and 
-that in turn means higher rents and longer leases. 
+What does this do? Happier people in these buildings means happier tenants, and 
+that in turn means higher rents and longer leases.
 Happier employee, happier employers, and happier landlords!
 
 ## Benchmarking
@@ -24,13 +25,15 @@ commercial market is even more complicated because the inventory is different,
 and the tenants are different - so imagine what a dashboard like this can do in 
 terms of improving the everyday of everyone who works in these buildings. 
 The goal here is to help owners understand what properties each building has, and 
-show them how they compare to their competitors. 
+show them what improvements would have the highest impact on their tenant's 
+satisfaction.
 
 ## Elements
 
-Data is coming from HqO servers as tables, and the folder data includes a step 
-by step guide on how to preprocess it. As a part of that process, two machine 
-learning models shall be trained on our data:
+Data is coming from HqO servers as tables, and the folder .\data\Building_data 
+includes a step by step guide on how to preprocess it. As a part of that process, 
+two machine learning models shall be trained on our data:
+
 - A Kmeans model to cluster our buildings
 - A regression model trained on the user satisfaction column
 
@@ -39,7 +42,7 @@ subsets of the data (ie. on buildings in the same city) to report back what
 specific factors are important in each of our comparison groups. With the 
 current size of our data set, it is my recommendation to train the model only 
 on the full data set, and instead define a metric to count for importance of
-each feature, the sdt of that feature in the data set, and the diferrence of 
+each feature, the sdt of that feature in the data set, and the difference of 
 mean of that feature in our subset with mean of it for buildings in the set that
 are reported to have a score above a desired level.
 
@@ -50,10 +53,10 @@ In the folder "plots" I have defined functions to draw diagrams showcasing the
 data we are looking at. Here is an example of the tenant satisfaction factors
 (from gathered data from users) as a box plot:
 
-<img src="./Images/satisfaction_factors.PNG" alt="drawing" style="width:200px;"/>
+<img src="./Images/satisfaction_factors.PNG" alt="drawing" style="width:175px;"/>
 <p>&nbsp;</p>
 
-and here is an example of a polar diagram showing coefiicients (feature 
+and here is an example of a polar diagram showing coefficients (feature 
 importance) of the model mentioned before:
 
 <img src="./Images/Feature_importance.PNG" alt="drawing" style="width:200px;"/>
@@ -63,7 +66,18 @@ importance) of the model mentioned before:
 
 To put it all together, I have used the streamlit library to create a mock up
 dashboard. The streamlit webpage does not have all the features in the images 
-below, but it gets very close in providing a base to work with.
+below, but it gets very close in providing a base to work with. Running the 
+dashboard.py file with streamlit creates a local web app with the plots mentioned 
+above.
 
-<img src="./Images/board1_world.PNG" alt="drawing" style="width:300px;"/>
+<img src="./Images/board1_world.png" alt="drawing" style="width:300px;"/>
+<p>&nbsp;</p>
+
+<img src="./Images/board2_city.png" alt="drawing" style="width:300px;"/>
+<p>&nbsp;</p>
+
+<img src="./Images/board3_building.png" alt="drawing" style="width:300px;"/>
+<p>&nbsp;</p>
+
+<img src="./Images/board4_comparison.png" alt="drawing" style="width:300px;"/>
 <p>&nbsp;</p>
