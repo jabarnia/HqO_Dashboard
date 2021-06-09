@@ -11,13 +11,8 @@ import hvplot.pandas
 import geopandas as gpd 
 from shapely.geometry import Point 
 
-'''
-I have downloaded the buidlings info from HqO data base
-there are some buildings that are missing lat/long and 
-at least one that is in the middle of nowhere
-we are going to drop them all.
-'''
 from plots import plot
+from Location_API import location
 
 
 df_buildings = pd.read_csv('DIM_BUILDING.csv')
@@ -26,22 +21,49 @@ city_bound = gpd.read_file('tl_2020_us_uac10.shp')
 df_data = pd.read_csv('df_users.csv')
 chicago_bound = gpd.read_file('Chicago/geo_export_ea2f6836-36fc-4f46-aa50-277ef4914884.shp')
 
+df_buildings['geometry'] = df_buildings.apply(lambda x: Point( x['LONGITUDE'] , x['LATITUDE']), axis = 1)
+gdf_buildings = gpd.GeoDataFrame(df_buildings, geometry = 'geometry')
+gdf_buildings.crs = {'init' :'epsg:4326'}
+nl = '\n'
+
+'''
+sample list of amenities, building names, cities, and possible comparison choices. 
+In the final product, the building list should reflect budilings that the user has in their portfolio
+'''
+
+amen_list = ['Amenities', 'Retail/Restaurants', 'Location','Sustainabiliy', 'Maintenance', 'Security', 'Other']
+building_list = ['All HqO Buildings', 'My Portfolio', 'HqO Park', 'Willis Tower', 'Yellow Business Center']
+city_list = ['Worldwide', 'Austin, TX', 'Chicago, IL', 'New York, NY']
+comparelist = ['Buidings of similar size', 'Buildings in the same city', 'Buildings in my portfolio']
+
+
+
+business_list = ['restaurant', 'cafe', 'bar', 'gym']
+city_tags = ['Chicago, IL':3, 'Austin, TX': 7]
+
+
+
+
+'''
+The two colors that have been used in the plots - one for the actual selection 
+and the other to represent what it is being compared againts
+'''
+
+color_select = '#f67171'
+color_compare = '#bfbfbf'
+
+
 
 #Let's start the streamlit page.
+
+
 st.set_page_config(layout="wide")
 
 st.sidebar.write('# **HqO Benchmark**' )
 st.sidebar.write('### TDI Capstone - Shiva Jabarnia')
     
 
-df_buildings['geometry'] = df_buildings.apply(lambda x: Point( x['LONGITUDE'] , x['LATITUDE']), axis = 1)
-gdf_buildings = gpd.GeoDataFrame(df_buildings, geometry = 'geometry')
-gdf_buildings.crs = {'init' :'epsg:4326'}
-nl = '\n'
-
-amen_list = ['Amenities', 'Retail/Restaurants', 'Location','Sustainabiliy', 'Maintenance', 'Security', 'Other']
-city_tags = ['Chicago':3, 'Austin': 7]
-
+#drop down menus on the side to pick what is to be shown
 
 
 def selection(df, sel, compare_to):
@@ -67,34 +89,47 @@ def selection(df, sel, compare_to):
     return None
 
 
+#making the picks for what data to show and what to compare to.
 
-building_list = ['All HqO Buildings', 'My Portfolio', 'HqO Park', 'Willis Tower', 'Yellow Business Center']
+
 building = building_list[0]
-city_list = ['Worldwide', 'Austin, TX', 'Chicago, IL', 'New York, NY']
 city = city_list[0]
-
 city = st.sidebar.selectbox('Location', city_list)
 building = st.sidebar.selectbox('Selection', building_list)
 
 
-if city == city_list[0]:
-    df_draw = df_data
-elif city!= city_list[0] and building == building_list[0]:
-    df_draw = df_chicago = df_data[ df_data['city'] == city_tags[city] ]
+'''
+df_draw is going to be our main source here for the plots. We are looking at what 
+the user has picked, to make the approporiate selection from df_data. If no selection
+has been made, the default values should not trigger any of these if clauses.
+'''
+
+if building != building_list[0]:
+    df_draw = gdf_buildings[gdf_buildings['NAME'] == building]
+elif city != city_list[0]:
+    df_draw = df_data[ df_data['city'] == city_tags[city]]
 else:
-    df_draw = df_data[df_data['NAME'] == building]
+    df_draw = df_data
 
 st.sidebar.markdown('---')
 
-
-comparelist = ['Buidings of similar size', 'Buildings in the same city', 'Buildings in my portfolio']
+'''
+Compare button will set a bolean to set whether the user wants to see only the data 
+from the set they have selected or if they want to compare that to other items.
+''' 
 compare_against = st.sidebar.selectbox('Compare Against:', comparelist)
 Compare = st.sidebar.button('Compare', key='Compare')
 
-color_select = '#f67171'
-color_compare = '#bfbfbf'
+'''
+right now I only have the base to compare against buildings in chicago
+in future iterations, there will be a function to create df_compare based 
+on the user input
+'''
+
+df_compare = df_data[ df_data['city'] == city_tags['Chicago, IL']]
 
 
+#breaking up the board into vertical coulumns to have things organized!
 row1_1, w1, row1_2 = st.beta_columns((4,1,17))
 
 with row1_1:
@@ -121,9 +156,7 @@ with row1_2:
         st.bokeh_chart(hv.render(p+g))
 
     if Compare:
-        
-        df_compare = df_chicago
-        
+
         p2 = plot.draw_user_compare(df_compare, color_compare)
         g2 = plot.draw_amen_selection(df_compare, color_compare)
 
@@ -139,24 +172,19 @@ with row1_2:
             st.bokeh_chart(hv.render(p + g1))
 
         
-df_restaurant = pd.read_csv("df_r.csv")
-df_bar = pd.read_csv("df_b.csv")
-df_gym = pd.read_csv("df_g.csv")
-df_cafe = pd.read_csv("df_c.csv")
+
 
 row2_1, row2_2, row2_3 = st.beta_columns((4,1,15))
 
 with row2_3:
+    # drawing the world map
     if city == city_list[0]:
         st.pydeck_chart(pdk.Deck(
-                #map_style =  "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-                #map_style='mapbox://styles/mapbox/light-v9',
                 map_style = 'mapbox://styles/shivajabarnia/ckoj9yu57030u19qic2w2dztl',
                 initial_view_state=pdk.ViewState(
                     latitude=35,
                     longitude=-45,
                     zoom=2,
-                    #height = 800        
                 ),
                 layers=[
                     pdk.Layer(
@@ -175,17 +203,14 @@ with row2_3:
 
     else:
         if building == building_list[0]:
-            #st.write(city)
+            # drawing the world map
             if city == city_list[0] :
                 st.pydeck_chart(pdk.Deck(
-                    #map_style =  "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-                    #map_style='mapbox://styles/mapbox/light-v9',
                     map_style = 'mapbox://styles/shivajabarnia/ckoj9yu57030u19qic2w2dztl',
                     initial_view_state=pdk.ViewState(
                         latitude=35,
                         longitude=-45,
                         zoom=2,
-                        #height = 800        
                     ),
                     layers=[
                         pdk.Layer(
@@ -203,10 +228,14 @@ with row2_3:
                 ))
 
             else:
+                #drawing the city map
+
                 city_bound_selected = city_bound[city_bound['NAME10'] == 'Chicago, IL--IN']
                 multicoords = [list(line.coords) for line in chicago_bound['geometry'].boundary.iloc[0]]
 
                 center = city_bound_selected['geometry'].centroid.iloc[0]
+
+                #selecting only buildings that fall into the limits of this city
 
                 selected_buildings = gdf_buildings[gdf_buildings['geometry']/
                             .within(city_bound_selected['geometry'].iloc[0])]
@@ -253,9 +282,11 @@ with row2_3:
                     ),
                     layers=[ciy_line, ciy_poly, building_points]
                 ))
-
-        if building == 'Willis Tower':
-            d_s = gdf_buildings[gdf_buildings['ID'] == 90].copy()
+        #drawing building map
+        if building != building_list[0]:
+            nearby = location.vic(df_draw['lat'], df_draw['long'])
+            d_s = gdf_buildings[gdf_buildings['NAME'] == building].copy()
+            #building point
             b_p = pdk.Layer(
                     'ScatterplotLayer',
                     data= d_s[['LONGITUDE', 'LATITUDE']],
@@ -268,6 +299,7 @@ with row2_3:
                     extruded=False
                     )
 
+            #5 minute walk 400 meters
             b_r = pdk.Layer(
                     'ScatterplotLayer',
                     data= d_s[['LONGITUDE', 'LATITUDE']],
@@ -280,19 +312,27 @@ with row2_3:
                     pickable=True,
                     extruded=False
                     )
+            
+            #nearby amenities as a scatter plot
+            nearby = []
+            map_colors = [[225,0,0], [255, 128, 0], [255, 0, 255], [0,128, 255]]
 
-            b_res = pdk.Layer(
-                    'ScatterplotLayer',
-                    data= df_restaurant[['LONGITUDE', 'LATITUDE']],
-                    get_position='[LONGITUDE, LATITUDE]',
-                    filled = True,
-                    getRadius = 10,
-                    radiusMinPixels = 5,
-                    getFillColor = [225,0,0],
-                    pickable=True,
-                    extruded=False
-                    )
-
+            for i in range(len(business_list)):
+                b = business_list[i]
+                new_layer = pdk.Layer(
+                        'ScatterplotLayer',
+                        data= nearby[b][['LONGITUDE', 'LATITUDE']],
+                        get_position='[LONGITUDE, LATITUDE]',
+                        filled = True,
+                        getRadius = 10,
+                        radiusMinPixels = 5,
+                        getFillColor = map_colors[i],
+                        pickable=True,
+                        extruded=False
+                        )
+                near_by.append(new_layer)
+            
+            
             st.pydeck_chart(pdk.Deck(
                 map_style='mapbox://styles/mapbox/light-v9',
                 initial_view_state=pdk.ViewState(
@@ -300,5 +340,5 @@ with row2_3:
                     longitude=-87.636516,
                     zoom=15
                 ),
-                layers=[b_p, b_r, b_res]
+                layers=[b_p, b_r] + near_by
             ))
