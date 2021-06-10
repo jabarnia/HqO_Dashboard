@@ -5,7 +5,7 @@ building are performing.
 
 ## Introduction 
 
-HqO is a platform that helps landlords (of commercial/office buildings) 
+The client here is a platform that helps landlords (of commercial/office buildings) 
 create a better experience for their customers (people who work in those 
 buildings). One of the services they currently provide is a white labeled application, 
 customizable for each of the buildings their clients own.
