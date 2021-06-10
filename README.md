@@ -1,4 +1,4 @@
-# HqO_Dashboard
+# TDI_Dashboard
 
 A dashboard for the HqO company's clients to provide insight into how their 
 building are performing.
